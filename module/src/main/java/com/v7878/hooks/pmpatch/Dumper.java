@@ -24,8 +24,8 @@ import com.v7878.unsafe.access.AccessLinker;
 import com.v7878.unsafe.access.AccessLinker.FieldAccess;
 import com.v7878.unsafe.foreign.LibDL;
 import com.v7878.unsafe.io.IOUtils;
+import com.v7878.unsafe.io.Maps;
 import com.v7878.vmtools.DexFileDump;
-import com.v7878.vmtools.MMap;
 import com.v7878.zygisk.ZygoteLoader;
 
 import java.io.File;
@@ -138,19 +138,19 @@ public class Dumper {
                                                 if (Modifier.isNative(method.getModifiers())) {
                                                     var addr = ArtMethodUtils.getExecutableData(method);
                                                     var info = LibDL.dladdr(addr);
-                                                    sb.append(String.format("%016X", info.fbase));
+                                                    sb.append(String.format("%016X", info.fbase()));
                                                     sb.append(" ");
-                                                    sb.append(String.format("%016X", info.saddr));
+                                                    sb.append(String.format("%016X", info.saddr()));
                                                     sb.append(" ");
                                                     sb.append(String.format("%016X", addr));
                                                     sb.append(" ");
-                                                    sb.append(info.fname);
+                                                    sb.append(info.fname());
                                                     sb.append(" ");
-                                                    sb.append(info.sname);
+                                                    sb.append(info.sname());
                                                     sb.append(" ");
                                                     sb.append(method);
                                                     sb.append("\n");
-                                                    if (info.fname == null) {
+                                                    if (info.fname() == null) {
                                                         entry_points.add(addr);
                                                     }
                                                 }
@@ -205,7 +205,7 @@ public class Dumper {
         final int test = 5;
         int[] i = {0};
 
-        try (var maps = MMap.maps("self")) {
+        try (var maps = Maps.maps("self")) {
             maps.forEach(entry -> {
                 if (i[0] > 0) {
                     i[0]--;
